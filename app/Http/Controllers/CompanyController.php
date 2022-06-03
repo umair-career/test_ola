@@ -57,14 +57,14 @@ class CompanyController extends Controller
                     die('Could not create database: ' . mysqli_error($conn));
                     
                 }
-                // $artisan    =   Artisan::call('migrate', array('--database' => $request->company,'--path' => 'database/migrations', '--force' => true));
-                // if($artisan){
-                //     return 'Database created successfully with name '.$new_db_name;
+                $bool= DBConnection($new_db_name);
+                $artisan    =   Artisan::call('migrate', array('--database' => $new_db_name,'--path' => 'database/migrations', '--force' => true));
+                if($artisan){
+                    return 'Database created successfully with name '.$new_db_name;
 
-                // }else{
-                //     return 'error while artisan command ';   
-                // }
-               
+                }else{
+                    return 'error while artisan command ';   
+                }               
             }
             
             catch(\Exception $e){
