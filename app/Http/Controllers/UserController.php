@@ -112,53 +112,6 @@ class UserController extends Controller
             else
             {
 
-                // return 'no';
-            
-                try{
-                    // $new_connection = 'new';
-                    // $nc = \Illuminate\Support\Facades\Config::set('database.connec‌​tions.' . $new_connect‌​ion, [
-                    //     'driver'   => 'mysql',
-                    //     'host'     => 'localhost',
-                    //     'database' => $dbName,
-                    //     'username' => 'root',
-                    //     'password' => '',
-                    // ]);
-                    
-
-                    $new_db_name = 'olaccounts_'.$request->name;
-                    $new_mysql_username = "root";
-                    $new_mysql_password = "";
-                
-                    
-                    $conn = mysqli_connect(
-                        config('database.connections.mysql.host'), 
-                        env('DB_USERNAME'), 
-                        env('DB_PASSWORD')
-                    );
-                    if(!$conn ) {
-                        return false;
-                    }
-                    $sql = 'CREATE Database IF NOT EXISTS '.$new_db_name;
-                    $exec_query = mysqli_query( $conn, $sql);
-                    if(!$exec_query) {
-                        die('Could not create database: ' . mysqli_error($conn));
-                        
-                    }
-                    // $artisan    =   Artisan::call('migrate', array('--database' => $request->company,'--path' => 'database/migrations', '--force' => true));
-                    // if($artisan){
-                    //     return 'Database created successfully with name '.$new_db_name;
-
-                    // }else{
-                    //     return 'error while artisan command ';   
-                    // }
-                
-                }
-                
-                catch(\Exception $e){
-                    return 'false';
-                    return 'Error '.$e->getLine()." ".$e->getMessage(); 
-                } 
-
                 $validator = \Validator::make(
                     $request->all(), [
                                        'name' => 'required|max:120',
