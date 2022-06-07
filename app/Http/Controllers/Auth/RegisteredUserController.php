@@ -79,7 +79,7 @@ class RegisteredUserController extends Controller
             'db_name' =>'olaaccounts_' .  $request->name,
             'db_password' => Hash::make($request->password),
             'db_username' => 'root',
-        ]);
+        ]);    
 
         
         $new_db_name = 'olaaccounts_' . $request->name;
@@ -87,7 +87,7 @@ class RegisteredUserController extends Controller
         $new_mysql_password = "";
 
         $database = DatabaseInfo::create([
-            'user_id' => 1,
+            'user_id' => $user->id,
             'db_name' =>$new_db_name,
             'db_password' => $new_mysql_password,
         ]);
@@ -117,7 +117,8 @@ class RegisteredUserController extends Controller
             $sql = 'CREATE Database IF NOT EXISTS ' . $new_db_name;
             $exec_query = mysqli_query($conn, $sql);
             if (!$exec_query) {
-                die('Could not create database: ' . mysqli_error($conn));
+                // die('Could not create database: ' . mysqli_error($conn));
+                $dbCreteError="could not create db";
             }
 
             $conn1 = mysqli_connect(
@@ -147,15 +148,15 @@ class RegisteredUserController extends Controller
 
             $artisan = Artisan::call('migrate', ['--database' => 'myConnection', '--path' => 'database/migrations', '--force' => true]);
             // $artisan    =   Artisan::call('migrate', array('--database' => $new_db_name,'--path' => 'database/migrations', '--force' => true));
-            if ($artisan) {
-                return 'Database created successfully with name ' . $new_db_name;
-            } else {
-                return 'error while artisan command ';
-            }
+            // if ($artisan) {
+            //     return 'Database created successfully with name ' . $new_db_name;
+            // } else {
+            //     return 'error while artisan command ';
+            // }
         }
         } catch (\Exception $e) {
-            return 'Error ' . $e->getLine() . " " . $e->getMessage();
-            return false;
+            // return 'Error ' . $e->getLine() . " " . $e->getMessage();
+            // return false;
         }
 
         Auth::login($user);

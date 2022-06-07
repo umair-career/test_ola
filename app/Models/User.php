@@ -51,6 +51,11 @@ class User extends Authenticatable
 
     public $settings;
 
+    public function dbinfo(){
+        return $this->hasOne('App\Models\DatabaseInfo', 'id');
+
+    }
+
     public function getProfileAttribute()
     {
         if(\Storage::exists($this->avatar) && !empty($this->avatar))

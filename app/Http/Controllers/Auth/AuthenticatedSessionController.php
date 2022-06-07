@@ -9,6 +9,7 @@ use  App\Models\Utility;
 use Carbon\Carbon;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\DatabaseInfo;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -82,7 +83,6 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
         $user = Auth::user();
 
-
         if($user->delete_status == 0)
         {
             auth()->logout();
@@ -95,6 +95,7 @@ class AuthenticatedSessionController extends Controller
         $user = \Auth::user();
         if($user->type == 'company')
         {
+            $dbinfo=DatabaseInfo::where('user_id', Auth::user()->id)->first();
             $plan = Plan::find($user->plan);
             if($plan)
             {
@@ -108,8 +109,26 @@ class AuthenticatedSessionController extends Controller
                     if($days <= 0)
                     {
                         $user->assignPlan(1);
-
-                        return redirect()->intended(RouteServiceProvider::HOME)->with('error', __('Your Plan is expired.'));
+                        config(["database.connections.myConnection" => [
+                            // fill with dynamic data:
+                            "driver" => "mysql",
+                            "host" =>  env('DB_HOST', '127.0.0.1'),
+                            "port" => "DB_PORT', '3306",
+                            "database" => $dbinfo->db_name, //Here you need to set value of session variable
+                            // "database" => Auth::user()->db_password, //Here you need to set value of session variable
+                            // "username" => Auth::user()->db_username, // credential will be the same for all
+                            "username" => "root", // credential will be the same for all
+                            "password" => "", // credential will be the same for all
+                            "charset" => "utf8",
+                            "collation" => "utf8_unicode_ci",
+                            "prefix" => "",
+                            "strict" => true,
+                            "engine" => null
+                        ]]);
+                        DB::purge('mysql');
+                        DB::setDefaultConnection('myConnection');
+                        // return \App\Models\User::all();
+                        return redirect()->intended(RouteServiceProvider::HOME)->with('error', __('Your Plan is expir.'));
                     }
                 }
             }
